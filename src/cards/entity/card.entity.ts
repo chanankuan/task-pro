@@ -1,9 +1,11 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Filter } from '../interfaces';
 import { BoardColumn } from 'src/columns/entity/column.entity';
@@ -28,4 +30,10 @@ export class Card {
   @ManyToOne(() => BoardColumn, (column) => column.cards)
   @JoinColumn({ name: 'column_id' })
   column: BoardColumn;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }
