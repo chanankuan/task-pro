@@ -1,27 +1,100 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { CardsService } from './cards.service';
+import { Request } from 'express';
+import { Payload } from 'src/auth/interfaces';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { NotFoundParseIntPipe, ZodValidationPipe } from 'src/common/pipes';
+import {
+  CreateCardRequestDto,
+  createCardSchema,
+  UpdateCardRequestDto,
+  updateCardSchema,
+} from './dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('cards')
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
   @Get(':id')
-  getById(@Param('id') card_id: number) {
-    return this.cardsService.getById(card_id);
+  async getById(
+    @Req() req: Request,
+    @Param('id', new NotFoundParseIntPipe()) cardId: number,
+  ) {
+    const { userId } = req.user as Payload;
+
+    const card = await this.cardsService.findById(userId, cardId);
+
+    return {
+      status: 'success',
+      payload: card,
+      message: null,
+    };
   }
 
   @Post()
-  create() {
-    return this.cardsService.create();
+  @UsePipes(new ZodValidationPipe(createCardSchema))
+  async create(
+    @Req() req: Request,
+    @Body() createCardDto: CreateCardRequestDto,
+  ) {
+    const { userId } = req.user as Payload;
+
+    const card = await this.cardsService.create(userId, createCardDto);
+
+    return {
+      status: 'success',
+      payload: card,
+      message: 'Card created successfully',
+    };
   }
 
   @Put(':id')
-  updateById(@Param('id') card_id: number) {
-    return this.cardsService.updateById(card_id);
+  async updateById(
+    @Req() req: Request,
+    @Param('id', new NotFoundParseIntPipe()) cardId: number,
+    @Body(new ZodValidationPipe(updateCardSchema))
+    updateCardDto: UpdateCardRequestDto,
+  ) {
+    const { userId } = req.user as Payload;
+
+    const card = await this.cardsService.updateById(
+      userId,
+      cardId,
+      updateCardDto,
+    );
+
+    return {
+      status: 'success',
+      payload: card,
+      message: 'Card updated succcessfully',
+    };
   }
 
   @Delete(':id')
-  deleteById(@Param('id') card_id: number) {
-    return this.cardsService.deleteById(card_id);
+  async deleteById(
+    @Req() req: Request,
+    @Param('id', new NotFoundParseIntPipe()) cardId: number,
+  ) {
+    const { userId } = req.user as Payload;
+
+    await this.cardsService.deleteById(userId, cardId);
+
+    return {
+      status: 'success',
+      payload: null,
+      message: 'Card deleted succcessfully',
+    };
   }
 }

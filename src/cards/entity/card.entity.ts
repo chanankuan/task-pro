@@ -1,13 +1,14 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Filter } from '../interfaces';
+import { Priority } from '../interfaces';
 import { BoardColumn } from 'src/columns/entity/column.entity';
 
 @Entity('cards')
@@ -21,19 +22,26 @@ export class Card {
   @Column({ type: 'varchar', length: 1000 })
   description: string;
 
-  @Column({ type: 'timestamp without time zone' })
+  @Column({ type: 'timestamptz' })
   deadline: Date;
 
-  @Column({ type: 'enum', enum: Filter, default: Filter.DEFAULT })
-  filter: Filter;
+  @Column({ type: 'enum', enum: Priority, default: Priority.DEFAULT })
+  priority: Priority;
 
   @ManyToOne(() => BoardColumn, (column) => column.cards)
   @JoinColumn({ name: 'column_id' })
   column: BoardColumn;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({
+    type: 'timestamptz',
+    onUpdate: 'CURRENT_TIMESTAMP', // Set new date on update,
+    name: 'updated_at',
+  })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz', nullable: true, name: 'deleted_at' })
+  deletedAt: Date;
 }
