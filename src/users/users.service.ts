@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { RegisterRequestDto } from 'src/auth/dto';
+import { ChangeThemeDto, UpdateProfileDto } from './dto';
 
 @Injectable()
 export class UsersService {
@@ -92,12 +93,40 @@ export class UsersService {
     return "This will update user's avatar";
   }
 
-  updateProfile() {
-    return "This will update user's profile data";
+  async updateProfile(userId: number, updateProfileDto: UpdateProfileDto) {
+    const user = await this.findById(userId);
+
+    // Ensure user exists
+    if (!user) {
+      throw new NotFoundException(
+        `The requested resource with ID '${userId}' was not found`,
+      );
+    }
+
+    const updatedUser = await this.usersRepository.save({
+      ...user,
+      ...updateProfileDto,
+    });
+
+    return updatedUser;
   }
 
-  changeTheme() {
-    return 'This will update theme';
+  async changeTheme(userId: number, changeThemeDto: ChangeThemeDto) {
+    const user = await this.findById(userId);
+
+    // Ensure user exists
+    if (!user) {
+      throw new NotFoundException(
+        `The requested resource with ID '${userId}' was not found`,
+      );
+    }
+
+    const updatedUser = await this.usersRepository.save({
+      ...user,
+      ...changeThemeDto,
+    });
+
+    return updatedUser;
   }
 
   help() {
