@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
@@ -28,7 +34,7 @@ export class UsersService {
     // attach name, email, and hash
     user.name = registerDto.name;
     user.email = registerDto.email;
-    user.password_hash = registerDto.password;
+    user.passwordHash = registerDto.password;
 
     // save the new user
     await this.usersRepository.save(user);
@@ -37,24 +43,39 @@ export class UsersService {
     return newUser;
   }
 
-  async updateTokens({
-    email,
-    access_token,
-    refresh_token,
-  }: Pick<User, 'email' | 'access_token' | 'refresh_token'>) {
-    const user = await this.findByEmail(email);
+  async assignTokens({
+    id,
+    accessToken,
+    refreshToken,
+  }: Pick<User, 'id' | 'accessToken' | 'refreshToken'>) {
+    const user = await this.findById(id);
 
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+      throw new NotFoundException('User not found');
     }
 
-    user.access_token = access_token;
-    user.refresh_token = refresh_token;
+    user.accessToken = accessToken;
+    user.refreshToken = refreshToken;
 
+    const updatedUser = await this.usersRepository.save(user);
+
+    const { passwordHash: _, ...result } = updatedUser;
+    return result;
+  }
+
+  async removeTokens(userId: number): Promise<void> {
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    // Set tokens to null
+    user.accessToken = null;
+    user.refreshToken = null;
+
+    // Save updates
     await this.usersRepository.save(user);
-
-    const updatedUser = await this.findByEmail(email);
-    return updatedUser;
   }
 
   async setFieldToNull(id: number, fieldName: string) {
