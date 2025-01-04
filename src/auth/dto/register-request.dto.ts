@@ -18,6 +18,7 @@ export const registerSchema = z
         message: 'Password must contain at least one special character',
       }), // At least one special character,
   })
-  .required();
+  .required()
+  .strict(); // Ensure no extra fields are allowed
 
 export type RegisterRequestDto = z.infer<typeof registerSchema>;

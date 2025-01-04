@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
+import { Payload } from '../interfaces';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -27,10 +28,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.usersService.findById(payload.sub);
 
     // Ensure the token in payload matches token stored in db
-    if (user && user.access_token !== token) {
+    if (!user || (user && user.accessToken !== token)) {
       return null;
     }
 
-    return { id: payload.sub, name: payload.username };
+    return { userId: payload.sub, name: payload.username } as Payload;
   }
 }

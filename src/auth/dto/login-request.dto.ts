@@ -5,6 +5,7 @@ export const loginSchema = z
     email: z.string().email(),
     password: z.string(),
   })
-  .required();
+  .required()
+  .strict(); // Ensure no extra fields are allowed
 
 export type LoginRequestDto = z.infer<typeof loginSchema>;

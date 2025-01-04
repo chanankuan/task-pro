@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Req,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
@@ -14,13 +15,15 @@ import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { loginSchema, RegisterRequestDto, registerSchema } from './dto';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { User } from 'src/users/entity/user.entity';
 import { Request } from 'express';
+import { Payload } from './interfaces';
+import { User } from 'src/users/entity/user.entity';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  // SIGN UP
   @Post('register')
   @UsePipes(new ZodValidationPipe(registerSchema))
   async register(@Body() registerDto: RegisterRequestDto) {
@@ -29,44 +32,81 @@ export class AuthController {
     return { name: user.name, email: user.email };
   }
 
+  // SIGN IN
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @UsePipes(new ZodValidationPipe(loginSchema))
-  async login(@Req() req: { user: User }) {
-    const user = await this.authService.login(req.user);
+  async login(@Req() req: Request) {
+    const user = await this.authService.login(req.user as User);
+
     return {
-      access_token: user.access_token,
-      refresh_token: user.refresh_token,
-      user: {
-        name: user.name,
-        email: user.email,
-        avatar_url: user.avatar_url,
-        theme: user.theme,
+      status: 'success',
+      payload: {
+        accessToken: user.accessToken,
+        refreshToken: user.refreshToken,
+        user: {
+          name: user.name,
+          email: user.email,
+          avatarUrl: user.avatarUrl,
+          theme: user.theme,
+        },
       },
+      message: 'Login successful',
     };
   }
 
+  // SIGN OUT
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req: Request) {
-    const { id } = req.user as Pick<User, 'id' | 'name'>;
+    const { userId } = req.user as Payload;
 
-    return await this.authService.logout(id);
+    await this.authService.logout(userId);
+
+    return {
+      status: 'success',
+      data: null,
+      message: 'Logout successful',
+    };
   }
 
+  // GET ME
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async me(@Req() req: Request) {
-    const { id } = req.user as Pick<User, 'id' | 'name'>;
-    const me = await this.authService.me(id);
+    const { userId } = req.user as Payload;
+
+    const me = await this.authService.me(userId);
 
     return {
-      name: me.name,
-      email: me.email,
-      avatar_url: me.avatar_url,
-      theme: me.theme,
+      status: 'success',
+      payload: {
+        name: me.name,
+        email: me.email,
+        avatarUrl: me.avatarUrl,
+        theme: me.theme,
+      },
+      message: null,
+    };
+  }
+
+  // REFRESH ACCESS TOKEN
+  @Post('refresh-token')
+  async refreshToken(@Req() req: Request) {
+    const [bearer, refreshToken] = req.headers.authorization!.split(' ');
+
+    if (bearer !== 'Bearer') {
+      throw new UnauthorizedException();
+    }
+
+    const accessToken = await this.authService.refreshToken(refreshToken);
+
+    return {
+      status: 'success',
+      payload: { accessToken: accessToken },
+      message: null,
     };
   }
 }
