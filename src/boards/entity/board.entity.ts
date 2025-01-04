@@ -1,9 +1,10 @@
-import { Filter } from 'src/cards/interfaces';
+import { Priority } from 'src/cards/interfaces';
 import { BoardColumn } from 'src/columns/entity/column.entity';
 import { User } from 'src/users/entity/user.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -20,25 +21,32 @@ export class Board {
   @Column({ type: 'varchar', length: 255 })
   title: string;
 
-  @Column({ type: 'smallint' })
-  icon_id: number;
+  @Column({ type: 'smallint', name: 'icon_id' })
+  iconId: number;
 
-  @Column({ type: 'varchar', length: 255 })
-  bg_name: string;
+  @Column({ type: 'varchar', length: 255, name: 'bg_name' })
+  bgName: string;
 
-  @Column({ type: 'enum', enum: Filter, default: Filter.DEFAULT })
-  filter: Filter;
+  @Column({ type: 'enum', enum: Priority, nullable: true, default: null })
+  filter: Priority;
 
-  @OneToMany(() => BoardColumn, (column) => column.board)
+  @OneToMany(() => BoardColumn, (column) => column.board, { cascade: true })
   columns: BoardColumn[];
 
-  @ManyToOne(() => User, (user) => user.boards)
+  @ManyToOne(() => User, (user) => user.boards, { nullable: false })
   @JoinColumn({ name: 'user_id' }) // Specify the custom column name
   user: User;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({
+    type: 'timestamptz',
+    onUpdate: 'CURRENT_TIMESTAMP', // Set new date on update,
+    name: 'updated_at',
+  })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz', nullable: true, name: 'deleted_at' })
+  deletedAt: Date;
 }

@@ -1,32 +1,108 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { BoardsService } from './boards.service';
+import {
+  type CreateBoardRequestDto,
+  createBoardSchema,
+  type UpdateBoardRequestDto,
+  updateBoardSchema,
+} from './dto';
+import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { Payload } from 'src/auth/interfaces';
+import { Request } from 'express';
+import { NotFoundParseIntPipe } from 'src/common/pipes';
 
+@UseGuards(JwtAuthGuard)
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Get()
-  getAll() {
-    return this.boardsService.getAll();
+  async findAll(@Req() req: Request) {
+    const { userId } = req.user as Payload;
+    const boards = await this.boardsService.findAll(userId);
+    return {
+      status: 'success',
+      payload: boards,
+      message: null,
+    };
   }
 
   @Get(':id')
-  getById(@Param('id') board_id: number) {
-    return this.boardsService.getById(board_id);
+  async findById(
+    @Req() req: Request,
+    @Param('id', new NotFoundParseIntPipe()) boardId: number,
+  ) {
+    const { userId } = req.user as Payload;
+    const board = await this.boardsService.findRelationById(userId, boardId);
+
+    return {
+      status: 'success',
+      payload: board,
+      message: null,
+    };
   }
 
   @Post()
-  create() {
-    return this.boardsService.create();
+  @UsePipes(new ZodValidationPipe(createBoardSchema))
+  async create(
+    @Req() req: Request,
+    @Body() createBoardDto: CreateBoardRequestDto,
+  ) {
+    const { userId } = req.user as Payload;
+    const board = await this.boardsService.create(userId, createBoardDto);
+
+    return {
+      status: 'success',
+      payload: board,
+      message: 'Board created successfully',
+    };
   }
 
   @Put(':id')
-  updateById(@Param('id') board_id: number) {
-    return this.boardsService.updateById(board_id);
+  async updateById(
+    @Req() req: Request,
+    @Param('id', new NotFoundParseIntPipe()) boardId: number,
+    @Body(new ZodValidationPipe(updateBoardSchema))
+    updateBoardDto: UpdateBoardRequestDto,
+  ) {
+    const { userId } = req.user as Payload;
+    const board = await this.boardsService.updateById(
+      userId,
+      boardId,
+      updateBoardDto,
+    );
+
+    return {
+      status: 'success',
+      payload: board,
+      message: 'Board updated successfully',
+    };
   }
 
   @Delete(':id')
-  deleteById(@Param('id') board_id: number) {
-    return this.boardsService.deleteById(board_id);
+  async deleteById(
+    @Req() req: Request,
+    @Param('id', new NotFoundParseIntPipe()) boardId: number,
+  ) {
+    const { userId } = req.user as Payload;
+    await this.boardsService.deleteById(userId, boardId);
+
+    return {
+      status: 'success',
+      payload: null,
+      message: 'Board deleted successfully',
+    };
   }
 }
