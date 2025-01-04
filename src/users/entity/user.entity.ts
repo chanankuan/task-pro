@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   OneToMany,
@@ -22,27 +23,44 @@ export class User {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  password_hash: string;
+  @Column({ type: 'varchar', length: 255, name: 'password_hash' })
+  passwordHash: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  avatar_url: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true, name: 'avatar_url' })
+  avatarUrl: string | null;
 
   @Column({ type: 'enum', enum: Theme, default: Theme.LIGHT })
   theme: Theme;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  access_token: string | null;
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    name: 'access_token',
+  })
+  accessToken: string | null;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  refresh_token: string | null;
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    name: 'refresh_token',
+  })
+  refreshToken: string | null;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({
+    type: 'timestamptz',
+    onUpdate: 'CURRENT_TIMESTAMP', // Set new date on update,
+    name: 'updated_at',
+  })
+  updatedAt: Date;
 
-  @OneToMany(() => Board, (board) => board.user)
+  @DeleteDateColumn({ type: 'timestamptz', nullable: true, name: 'deleted_at' })
+  deletedAt: Date;
+
+  @OneToMany(() => Board, (board) => board.user, { cascade: true })
   boards: Board[];
 }
