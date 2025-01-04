@@ -3,6 +3,7 @@ import { Card } from 'src/cards/entity/card.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -19,16 +20,23 @@ export class BoardColumn {
   @Column({ type: 'varchar', length: 255 })
   title: string;
 
-  @ManyToOne(() => Board, (board) => board.columns)
+  @ManyToOne(() => Board, (board) => board.columns, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'board_id' })
   board: Board;
 
-  @OneToMany(() => Card, (card) => card.column)
+  @OneToMany(() => Card, (card) => card.column, { cascade: true })
   cards: Card[];
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({
+    type: 'timestamptz',
+    onUpdate: 'CURRENT_TIMESTAMP', // Set new date on update,
+    name: 'updated_at',
+  })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz', nullable: true, name: 'deleted_at' })
+  deletedAt: Date;
 }
