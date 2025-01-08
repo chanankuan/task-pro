@@ -14,6 +14,7 @@ import { ColumnsModule } from './columns/columns.module';
 import { CardsModule } from './cards/cards.module';
 import { BoardColumn } from './columns/entity/column.entity';
 import { Card } from './cards/entity/card.entity';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { Card } from './cards/entity/card.entity';
     BackgroundsModule,
     ColumnsModule,
     CardsModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
