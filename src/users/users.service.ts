@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import { join } from 'path';
 import {
   HttpException,
   HttpStatus,
@@ -10,12 +12,15 @@ import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { RegisterRequestDto } from 'src/auth/dto';
 import { ChangeThemeDto, UpdateProfileDto } from './dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryFolders } from 'src/cloudinary/interfaces/CloudinaryFolders.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async findByEmail(email: string) {
@@ -89,8 +94,47 @@ export class UsersService {
     await this.usersRepository.update(id, { [fieldName]: null });
   }
 
-  updateAvatar() {
-    return "This will update user's avatar";
+  async updateAvatar(userId: number, fileName: string) {
+    // Ensure user exist
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    if (user.avatarUrl) {
+      // Get public id
+      // It is the string just before .webp (task_pro/avatars/mrips7h8xqth6rngxwdb)
+      // https://res.cloudinary.com/devidwxqr/image/upload/v1736189332/task_pro/avatars/mrips7h8xqth6rngxwdb.webp
+      const publicId =
+        'task_pro/avatars/' +
+        user.avatarUrl.split('/').at(-1)!.split('.webp')[0];
+
+      await this.cloudinaryService.delete(publicId);
+    }
+
+    // Path to the file
+    const filePath = join(process.cwd(), 'uploads', fileName);
+
+    const avatarUrl = await this.cloudinaryService.upload(
+      filePath,
+      CloudinaryFolders.AVATAR,
+    );
+
+    // Remove the file
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error(`Error removing file: ${err}`);
+        return;
+      }
+    });
+
+    // assign the url
+    user.avatarUrl = avatarUrl;
+
+    await this.usersRepository.save(user);
+
+    return user;
   }
 
   async updateProfile(userId: number, updateProfileDto: UpdateProfileDto) {
