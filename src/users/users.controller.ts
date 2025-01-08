@@ -1,11 +1,14 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
@@ -16,8 +19,9 @@ import {
   UpdateProfileDto,
   updateProfileSchema,
 } from './dto';
-import { ZodValidationPipe } from 'src/common/pipes';
+import { SharpPipe, ZodValidationPipe } from 'src/common/pipes';
 import { Payload } from 'src/auth/interfaces';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -25,8 +29,34 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Patch('update-avatar')
-  updateAvatar() {
-    return this.usersService.updateAvatar();
+  @UseInterceptors(
+    FileInterceptor('image', {
+      fileFilter: (_, file, callback) => {
+        // Accept only specific image formats
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return callback(
+            new BadRequestException('Only image files are allowed'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async updateAvatar(
+    @Req() req: Request,
+    @UploadedFile(SharpPipe) fileName: string,
+  ) {
+    const { userId } = req.user as Payload;
+
+    const user = await this.usersService.updateAvatar(userId, fileName);
+    return {
+      status: 'success',
+      payload: {
+        avatarUrl: user.avatarUrl,
+      },
+      message: 'Avatar updated successfully',
+    };
   }
 
   @Patch('update-profile')
