@@ -108,8 +108,16 @@ export class UsersController {
     return this.usersService.help();
   }
 
-  @Delete('delete-user')
-  deleteUser() {
-    return this.usersService.deleteUser();
+  @Delete('delete-account')
+  async deleteUser(@Req() req: Request) {
+    const { userId } = req.user as Payload;
+
+    await this.usersService.deleteUser(userId);
+
+    return {
+      status: 'success',
+      payload: null,
+      message: 'Account deleted successfully',
+    };
   }
 }

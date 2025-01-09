@@ -27,8 +27,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Retieve user's data
     const user = await this.usersService.findById(payload.sub);
 
-    // Ensure the token in payload matches token stored in db
-    if (!user || (user && user.accessToken !== token)) {
+    // Ensure the token in payload matches token stored in db and the user account is active
+    if (!user || (user && user.accessToken !== token) || user.deletedAt) {
       return null;
     }
 

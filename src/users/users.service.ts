@@ -9,11 +9,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { RegisterRequestDto } from 'src/auth/dto';
 import { ChangeThemeDto, UpdateProfileDto } from './dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { CloudinaryFolders } from 'src/cloudinary/interfaces/CloudinaryFolders.enum';
+import { Card } from 'src/cards/entity/card.entity';
+import { BoardColumn } from 'src/columns/entity/column.entity';
+import { Board } from 'src/boards/entity/board.entity';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +24,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async findByEmail(email: string) {
@@ -177,7 +181,65 @@ export class UsersService {
     return 'This will send an email to support team';
   }
 
-  deleteUser() {
+  // DELETE ACCOUNT
+  async deleteUser(userId: number) {
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    await this.dataSource.transaction(async (manager) => {
+      const currentDate = new Date();
+
+      // Soft delete cards related to the board's columns
+      await manager
+        .createQueryBuilder()
+        .update(Card)
+        .set({ deletedAt: currentDate })
+        .where(
+          `column_id IN (
+            SELECT id FROM columns
+            WHERE board_id IN (
+              SELECT id FROM boards
+              WHERE user_id = :userId
+            )
+          )`,
+          { userId },
+        )
+        .andWhere('deleted_at IS NULL')
+        .execute();
+
+      // Soft delete columns related to the board
+      await manager
+        .createQueryBuilder()
+        .update(BoardColumn)
+        .set({ deletedAt: currentDate })
+        .where('board_id IN (SELECT id FROM boards WHERE user_id = :userId)', {
+          userId,
+        })
+        .andWhere('deleted_at IS NULL')
+        .execute();
+
+      // Soft delete the board
+      await manager
+        .createQueryBuilder()
+        .update(Board)
+        .set({ deletedAt: currentDate })
+        .where('id IN (SELECT id FROM boards WHERE user_id = :userId)', {
+          userId,
+        })
+        .execute();
+
+      // Soft delete the user
+      await manager
+        .createQueryBuilder()
+        .update(User)
+        .set({ deletedAt: currentDate })
+        .where('id = :userId', { userId })
+        .execute();
+    });
+
     return 'This will delete user profile';
   }
 }
