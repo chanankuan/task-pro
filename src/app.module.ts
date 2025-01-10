@@ -15,11 +15,12 @@ import { CardsModule } from './cards/cards.module';
 import { BoardColumn } from './columns/entity/column.entity';
 import { Card } from './cards/entity/card.entity';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { SupportModule } from './support/support.module';
+import { Support } from './support/entity/Support.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.development.local'],
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
@@ -33,8 +34,11 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         // automatically synchronize the schema with the database
-        synchronize: true, // dangerous, only for dev mode
-        entities: [User, Board, BoardColumn, Card, Background],
+        // synchronize: true, // dangerous, only for dev mode
+        entities: [User, Board, BoardColumn, Card, Background, Support],
+        migrations: ['dist/migrations/*.js'],
+        migrationsTableName: 'typeorm_migrations', // Optional: specify the migrations table name
+        synchronize: configService.get<string>('NODE_ENV') === 'development', // Set this to false in production
       }),
       inject: [ConfigService],
     }),
@@ -45,6 +49,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     ColumnsModule,
     CardsModule,
     CloudinaryModule,
+    SupportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
