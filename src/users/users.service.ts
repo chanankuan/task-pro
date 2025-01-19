@@ -47,9 +47,7 @@ export class UsersService {
     user.passwordHash = registerDto.password;
 
     // save the new user
-    await this.usersRepository.save(user);
-
-    const newUser = await this.findByEmail(user.email);
+    const newUser = await this.usersRepository.save(user);
     return newUser;
   }
 
@@ -68,9 +66,7 @@ export class UsersService {
     user.refreshToken = refreshToken;
 
     const updatedUser = await this.usersRepository.save(user);
-
-    const { passwordHash: _, ...result } = updatedUser;
-    return result;
+    return updatedUser;
   }
 
   async removeTokens(userId: number): Promise<void> {
@@ -177,8 +173,34 @@ export class UsersService {
     return updatedUser;
   }
 
+  // SET VERIFICATION TOKEN
+  async updateVerificationToken(userId: number, token: string) {
+    await this.usersRepository.update(
+      { id: userId },
+      { verificationToken: token },
+    );
+  }
+
+  // REMOVE VERIFICATION TOKEN
+  async removeVerificationToken(userId: number) {
+    await this.usersRepository.update(
+      { id: userId },
+      { verificationToken: null },
+    );
+  }
+
+  // UPDATE PASSWORD
+  async updatePassword(userId: number, hash: string) {
+    await this.usersRepository.update({ id: userId }, { passwordHash: hash });
+  }
+
   help() {
     return 'This will send an email to support team';
+  }
+
+  // ACTIVATE USER ACCOUNT
+  async activateUser(userId: number) {
+    await this.usersRepository.update({ id: userId }, { isVerified: true });
   }
 
   // DELETE ACCOUNT
