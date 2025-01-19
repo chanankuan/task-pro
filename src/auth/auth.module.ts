@@ -1,28 +1,31 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtConfigModule } from 'src/jwt/jwt.module';
+import { JwtService } from 'src/jwt/jwt.service';
+import { MailerModule } from 'src/mailer/mailer.module';
+import { MailerService } from 'src/mailer/mailer.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    JwtModule.registerAsync({
-      imports: [ConfigModule], // initialize ConfigModule
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '1h' },
-      }),
-      inject: [ConfigService], // inject ConfigService
-    }),
+    JwtConfigModule,
+    MailerModule,
     PassportModule,
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy],
+  providers: [
+    AuthService,
+    JwtService,
+    JwtStrategy,
+    LocalStrategy,
+    MailerService,
+  ],
 })
 export class AuthModule {}
