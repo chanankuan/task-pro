@@ -17,6 +17,9 @@ import { Card } from './cards/entity/card.entity';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SupportModule } from './support/support.module';
 import { Support } from './support/entity/Support.entity';
+import { MailerService } from './mailer/mailer.service';
+import { MailerModule } from './mailer/mailer.module';
+import { JwtConfigModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -50,8 +53,10 @@ import { Support } from './support/entity/Support.entity';
     CardsModule,
     CloudinaryModule,
     SupportModule,
+    MailerModule,
+    JwtConfigModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailerService],
 })
 export class AppModule {}
