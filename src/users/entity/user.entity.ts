@@ -48,6 +48,17 @@ export class User {
   })
   refreshToken: string | null;
 
+  @Column({ type: 'boolean', default: false, name: 'is_verified' })
+  isVerified: boolean;
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    name: 'verification_token',
+  })
+  verificationToken: string | null;
+
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;
 
