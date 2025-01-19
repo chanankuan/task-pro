@@ -5,6 +5,8 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Put,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -12,12 +14,25 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
-import { loginSchema, RegisterRequestDto, registerSchema } from './dto';
+import {
+  ChangePasswordDto,
+  changePasswordSchema,
+  loginSchema,
+  RegisterRequestDto,
+  registerSchema,
+  ResetPasswordDto,
+  resetPasswordSchema,
+} from './dto';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { Request } from 'express';
 import { Payload } from './interfaces';
 import { User } from 'src/users/entity/user.entity';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import {
+  ResendVerificationEmailDto,
+  resendVerificationEmailSchema,
+} from './dto/resend-verification-email.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +44,11 @@ export class AuthController {
   async register(@Body() registerDto: RegisterRequestDto) {
     const user = await this.authService.register(registerDto);
 
-    return { name: user.name, email: user.email };
+    return {
+      status: 'success',
+      payload: { name: user.name, email: user.email },
+      message: 'An email verification was send',
+    };
   }
 
   // SIGN IN
@@ -93,6 +112,7 @@ export class AuthController {
   }
 
   // REFRESH ACCESS TOKEN
+  @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
   async refreshToken(@Req() req: Request) {
     const [bearer, refreshToken] = req.headers.authorization!.split(' ');
@@ -107,6 +127,84 @@ export class AuthController {
       status: 'success',
       payload: { accessToken: accessToken },
       message: null,
+    };
+  }
+
+  // CHANGE PASSWORD
+  @UseGuards(JwtAuthGuard)
+  @Put('change-password')
+  async updatePassword(
+    @Req() req: Request,
+    @Body(new ZodValidationPipe(changePasswordSchema))
+    changePasswordDto: ChangePasswordDto,
+  ) {
+    const { userId } = req.user as Payload;
+    await this.authService.changePassword(userId, changePasswordDto);
+
+    return {
+      status: 'success',
+      payload: null,
+      message: 'Password changed successfully',
+    };
+  }
+
+  // VERIFY EMAIL
+  @HttpCode(HttpStatus.OK)
+  @Post('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    await this.authService.verifyEmail(token);
+
+    return {
+      status: 'success',
+      payload: null,
+      message: 'Email is verified',
+    };
+  }
+
+  // RESEND CONFIRMATION EMAIL
+  @HttpCode(HttpStatus.OK)
+  @Post('resend-verification-email')
+  async sendVerificationEmail(
+    @Body(new ZodValidationPipe(resendVerificationEmailSchema))
+    resendVerificationEmailDto: ResendVerificationEmailDto,
+  ) {
+    await this.authService.sendVerificationEmail(
+      resendVerificationEmailDto.email,
+    );
+
+    return {
+      status: 'success',
+      payload: null,
+      message: 'Email was sent successfully',
+    };
+  }
+
+  // REQUEST PASSWORD RESET
+  @HttpCode(HttpStatus.OK)
+  @Post('forgot-password')
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    await this.authService.forgotPassword(forgotPasswordDto);
+
+    return {
+      status: 'success',
+      payload: null,
+      message: 'Password request was sent on email',
+    };
+  }
+
+  // PASSWORD RESET
+  @HttpCode(HttpStatus.OK)
+  @Post('reset-password')
+  async resetPassword(
+    @Body(new ZodValidationPipe(resetPasswordSchema))
+    resetPasswordDto: ResetPasswordDto,
+  ) {
+    await this.authService.resetPassword(resetPasswordDto);
+
+    return {
+      status: 'success',
+      payload: null,
+      message: 'Password was reset',
     };
   }
 }
