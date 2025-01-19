@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   Req,
   UseGuards,
   UsePipes,
@@ -60,7 +60,7 @@ export class CardsController {
     };
   }
 
-  @Put(':id')
+  @Patch(':id')
   async updateById(
     @Req() req: Request,
     @Param('id', new NotFoundParseIntPipe()) cardId: number,

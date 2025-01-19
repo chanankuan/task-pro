@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   Req,
   UseGuards,
   UsePipes,
@@ -70,7 +70,7 @@ export class BoardsController {
     };
   }
 
-  @Put(':id')
+  @Patch(':id')
   async updateById(
     @Req() req: Request,
     @Param('id', new NotFoundParseIntPipe()) boardId: number,

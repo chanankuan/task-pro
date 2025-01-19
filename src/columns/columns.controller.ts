@@ -5,8 +5,8 @@ import {
   Get,
   NotFoundException,
   Param,
+  Patch,
   Post,
-  Put,
   Req,
   UseGuards,
   UsePipes,
@@ -70,7 +70,7 @@ export class ColumnsController {
   }
 
   // UPDATE COLUMN
-  @Put(':id')
+  @Patch(':id')
   async updateById(
     @Req() req: Request,
     @Param('id', new NotFoundParseIntPipe()) columnId: number,
