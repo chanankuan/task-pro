@@ -101,6 +101,12 @@ export class BoardsService {
     // Ensure board with id 'boardId' exists and belong to user with id 'userId'
     const board = await this.findById(userId, boardId);
 
+    if (!board) {
+      throw new NotFoundException(
+        `The requested resource with ID '${boardId}' was not found`,
+      );
+    }
+
     // Update board
     const updatedBoard = await this.boardsRepository.save({
       ...board,
@@ -108,9 +114,7 @@ export class BoardsService {
       updatedAt: new Date(),
     });
 
-    // Remove unnecessary
-    const { createdAt: _, updatedAt: __, ...response } = updatedBoard;
-    return response;
+    return updatedBoard;
   }
 
   async deleteById(userId: number, boardId: number) {
