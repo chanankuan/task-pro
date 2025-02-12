@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Theme } from '../interfaces';
 import { Board } from 'src/boards/entity/board.entity';
+import { Support } from 'src/support/entity/Support.entity';
 
 @Entity('users')
 export class User {
@@ -74,4 +75,7 @@ export class User {
 
   @OneToMany(() => Board, (board) => board.user, { cascade: true })
   boards: Board[];
+
+  @OneToMany(() => Board, (board) => board.user, { cascade: true })
+  supports: Support[];
 }
