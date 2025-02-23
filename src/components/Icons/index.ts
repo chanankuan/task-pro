@@ -6,6 +6,7 @@ export * from "./DeleteIcon";
 export * from "./EditIcon";
 export * from "./EyeCrossedIcon";
 export * from "./EyeIcon";
+export * from "./Logo";
 export * from "./LogoutIcon";
 export * from "./PlusIcon";
 export * from "./ShevronIcon";
