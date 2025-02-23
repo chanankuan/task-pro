@@ -1,9 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 
-// Pages
-import { Welcome } from "./pages/Welcome";
-import { Login, Register } from "./pages/Auth";
-import { Home } from "./pages/Home";
+import { Auth, Home, Welcome } from "./pages";
 
 function App() {
   return (
@@ -13,8 +10,8 @@ function App() {
 
       <Route path="auth">
         <Route index element={<Navigate to="login" />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        <Route path="login" element={<Auth />} />
+        <Route path="register" element={<Auth />} />
       </Route>
 
       <Route path="home">
@@ -22,6 +19,8 @@ function App() {
         {/* <Route element={<MainLayout />} /> */}
         <Route path=":boardId" />
       </Route>
+
+      <Route path="*" element={<Navigate to="/home" replace={true} />} />
     </Routes>
   );
 }

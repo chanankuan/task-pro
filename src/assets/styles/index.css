@@ -1,0 +1,307 @@
+/* Import css normalize */
+@import "modern-normalize/modern-normalize.css";
+
+/* Import fonts */
+/* Light */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 300;
+  src: url("../fonts/Poppins-Light.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: italic;
+  font-weight: 300;
+  src: url("../fonts/Poppins-LightItalic.ttf");
+}
+
+/* Regular */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: italic;
+  font-weight: 400;
+  src: url("../fonts/Poppins-Italic.ttf");
+}
+
+/* Medium */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  src: url("../fonts/Poppins-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: italic;
+  font-weight: 500;
+  src: url("../fonts/Poppins-MediumItalic.ttf");
+}
+
+/* Semi Bold */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  src: url("../fonts/Poppins-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: italic;
+  font-weight: 600;
+  src: url("../fonts/Poppins-SemiBoldItalic.ttf");
+}
+
+/* Bold */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../fonts/Poppins-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: italic;
+  font-weight: 700;
+  src: url("../fonts/Poppins-BoldItalic.ttf");
+}
+
+:root {
+  /* Common */
+  --primary-color: #161616;
+  --secondary-color: #16161670;
+  --primary-accent-color: #bedbb0;
+  --label-color: #16161650;
+  --dropdown-color: #16161680;
+  --icon-primary-color: #16161650;
+  --icon-primary-accent-color: #bedbb0;
+  --icon-secondary-color: #161616;
+
+  --bg-color: #f6f6f7;
+  --bg-primary-color: #ffffff;
+  --bg-modal-color: #fcfcfc;
+  --bg-line-color: #16161610;
+
+  --logo-bg-color: #1f1f1f;
+  --logo-fg-color: #ffffff;
+
+  /* Sidebar */
+  --sb-primary-color: #161616;
+  --sb-secondary-color: #16161650;
+  --sb-span-color: #bedbb0;
+  --sb-bg-primary-color: #ffffff;
+  --sb-bg-secondary-color: #f6f6f7;
+  --sb-selected-board-bg-color: #f6f6f7;
+  --sb-selected-board-label-color: #bedbb0;
+  --sb-board-unhovered-font-color: #16161650;
+  --sb-logout-icon-color: #bedbb0;
+  --sb-logout-icon-accent-color: #9dc888;
+
+  /* Header */
+  --header-theme-option-color: #161616;
+  --header-name-color: #161616;
+  --header-avatar-bg-color: #f6f6f7;
+  --header-avatar-fg-color: #ffffff;
+
+  /* Board */
+  --board-vertical-track-color: #e8e8e8;
+  --board-vertical-thumb-color: #16161610;
+  --board-horizontal-track-color: #ffffff;
+  --board-horizontal-thumb-color: #e8e8e8;
+  --board-filter-icon-color: #161616;
+
+  --calendar-bg-color: #ffffff;
+
+  /* Border colors */
+  --input-border-color: #bedbb0;
+
+  /* Button colors */
+  --button-primary-color: #bedbb0;
+  --button-primary-accent-color: #9dc888;
+  --plus-icon-bg-primary-color: #161616;
+  --plus-icon-fg-primary-color: #ffffff;
+  --plus-icon-bg-secondary-color: #161616;
+  --plus-icon-fg-secondary-color: #ffffff;
+  --plus-icon-bg-tertiary-color: #bedbb0;
+  --plus-icon-fg-tertiary-color: #121212;
+
+  /* Priority colors */
+  --priority-no: #ffffff30;
+  --priority-low: #8fa1d0;
+  --priority-medium: #e09cb5;
+  --priority-high: #bedbb0;
+
+  /* Transitions */
+  --icon-transition: stroke 0.1s ease-in-out, fill 0.1s ease-in-out;
+  --bg-transition: background-color 0.1s ease-in-out;
+
+  /* Border radius */
+  --border-radius-btn: 8px;
+
+  /* Padding */
+  --input-padding: 14px 18px;
+  --input-box-shadow: 0px 4px 16px 0px rgba(22, 22, 22, 0.08);
+}
+
+html[data-theme="dark"] {
+  /* Common */
+  --primary-color: #ffffff;
+  --secondary-color: #ffffff50;
+  --primary-accent-color: #bedbb0;
+  --label-color: #ffffff50;
+  --dropdown-color: #ffffff80;
+  --icon-primary-color: #ffffff50;
+  --icon-primary-accent-color: #bedbb0;
+  --icon-secondary-color: #ffffff;
+
+  --bg-color: #1f1f1f;
+  --bg-primary-color: #121212;
+  --bg-modal-color: #151515;
+  --bg-line-color: #ffffff10;
+
+  --logo-bg-color: #1f1f1f;
+  --logo-fg-color: #ffffff;
+
+  /* Sidebar */
+  --sb-primary-color: #161616;
+  --sb-secondary-color: #16161650;
+  --sb-span-color: #bedbb0;
+  --sb-bg-primary-color: #121212;
+  --sb-bg-secondary-color: #1f1f1f;
+  --sb-selected-board-bg-color: #f6f6f7;
+  --sb-selected-board-label-color: #bedbb0;
+  --sb-logout-icon-color: #bedbb0;
+  --sb-logout-icon-accent-color: #9dc888;
+
+  /* Header */
+  --header-theme-option-color: #ffffff50;
+  --header-name-color: #ffffff;
+  --header-avatar-bg-color: #1f1f1f;
+  --header-avatar-fg-color: #151515;
+
+  /* Board */
+  --board-vertical-track-color: #ffffff08;
+  --board-vertical-thumb-color: #121212;
+  --board-horizontal-track-color: #161616;
+  --board-horizontal-thumb-color: #ffffff10;
+  --board-filter-icon-color: #ffffff80;
+
+  --calendar-bg-color: #151515;
+
+  /* Border colors */
+  --input-border-color: #bedbb0;
+
+  /* Button colors */
+  --button-primary-color: #bedbb0;
+  --button-primary-accent-color: #9dc888;
+  --plus-icon-bg-primary-color: #161616;
+  --plus-icon-fg-primary-color: #ffffff;
+  --plus-icon-bg-secondary-color: #ffffff;
+  --plus-icon-fg-secondary-color: #121212;
+  --plus-icon-bg-tertiary-color: #bedbb0;
+  --plus-icon-fg-tertiary-color: #121212;
+}
+
+html[data-theme="violet"] {
+  /* Common */
+  --primary-color: #161616;
+  --secondary-color: #16161670;
+  --primary-accent-color: ##5255bc;
+  --label-color: #16161650;
+  --dropdown-color: #16161680;
+  --icon-primary-color: #ffffff50;
+  --icon-primary-accent-color: #5255bc;
+  --icon-secondary-color: #161616;
+
+  --bg-color: #ecedfd;
+  --bg-primary-color: #ffffff;
+  --bg-modal-color: #fcfcfc;
+  --bg-line-color: #16161610;
+
+  --logo-bg-color: #ecedfd;
+  --logo-fg-color: #5255bc;
+
+  /* Sidebar */
+  --sb-primary-color: #ffffff;
+  --sb-secondary-color: #ffffff50;
+  --sb-span-color: ##5255bc;
+  --sb-bg-primary-color: #5255bc;
+  --sb-bg-secondary-color: #5255bc;
+  --sb-selected-board-bg-color: #ffffff50;
+  --sb-selected-board-label-color: #ffffff;
+  --sb-logout-icon-color: #ffffff;
+  --sb-logout-icon-accent-color: #b8bcfd;
+
+  /* Header */
+  --header-theme-option-color: #16161680;
+  --header-name-color: #161616;
+  --header-avatar-bg-color: #ecedfd;
+  --header-avatar-fg-color: #ffffff;
+
+  /* Board */
+  --board-vertical-track-color: #ffffff08;
+  --board-vertical-thumb-color: #121212;
+  --board-horizontal-track-color: #161616;
+  --board-horizontal-thumb-color: #ffffff10;
+  --board-filter-icon-color: #ffffff80;
+
+  --calendar-bg-color: #151515;
+
+  /* Border colors */
+  --input-border-color: #bedbb0;
+
+  /* Button colors */
+  --button-primary-color: #7b7ede;
+  --button-primary-accent-color: #5255bc;
+  --plus-icon-bg-primary-color: #ffffff;
+  --plus-icon-fg-primary-color: #161616;
+  --plus-icon-bg-secondary-color: #5255bc;
+  --plus-icon-fg-secondary-color: #ffffff;
+  --plus-icon-bg-tertiary-color: #b8bcfd;
+  --plus-icon-fg-tertiary-color: #ffffff;
+}
+
+body {
+  font-family: "Poppins";
+  background-color: var(--bg-color);
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+/* Remove list styles */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove default anchor styles */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Remove button styles */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Remove outline on focus but keep for keyboard users */
+a,
+button,
+input,
+textarea {
+  outline: none;
+}
