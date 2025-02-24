@@ -1,0 +1,38 @@
+.wrapper {
+  width: 100%;
+  padding: 24px;
+  background-color: #151515;
+  border-radius: 8px;
+}
+
+.navbar {
+  margin-bottom: 40px;
+}
+
+.nav-list {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  column-gap: 14px;
+
+  .nav-link {
+    color: #ffffff30;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.36px;
+
+    &.active {
+      color: #ffffff;
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .wrapper {
+    width: 424px;
+    padding: 40px;
+    margin: 0 auto;
+  }
+}
