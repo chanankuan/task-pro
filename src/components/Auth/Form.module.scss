@@ -1,0 +1,77 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 14px;
+  margin-bottom: 24px;
+}
+
+.input {
+  width: 100%;
+  padding: var(--input-padding);
+  box-shadow: var(--input-box-shadow);
+  background-color: #1f1f1f;
+  border-radius: var(--border-radius-btn);
+  border: 1px solid #bedbb040;
+  transition: border 0.1s ease-in-out;
+
+  color: #ffffff;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.28px;
+
+  &::placeholder {
+    color: #ffffff40;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.28px;
+  }
+
+  &:focus {
+    border: 1px solid #bedbb0;
+  }
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+  opacity: 0.4;
+  transition: opacity var(--icon-transition);
+  display: flex;
+}
+
+/* When input is focused, also apply opacity 1 to the icon */
+.input-wrapper:focus-within .icon {
+  opacity: 1;
+}
+
+.submit-button {
+  color: #161616;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.28px;
+
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #bedbb0;
+  padding: 14px;
+  border-radius: var(--border-radius-btn);
+  transition: var(--bg-transition);
+
+  &:hover {
+    background-color: #9dc888;
+  }
+}
