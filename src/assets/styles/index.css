@@ -143,7 +143,7 @@
   --priority-high: #bedbb0;
 
   /* Transitions */
-  --icon-transition: 0.1s ease-in-out, fill 0.1s ease-in-out;
+  --icon-transition: stroke 0.1s ease-in-out, fill 0.1s ease-in-out;
   --bg-transition: background-color 0.1s ease-in-out;
 
   /* Border radius */
@@ -279,22 +279,9 @@ body {
 }
 
 /* Remove list styles */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  margin: 0;
-}
-
 ul,
 ol {
   list-style: none;
-  margin: 0;
-  padding: 0;
 }
 
 /* Remove default anchor styles */
