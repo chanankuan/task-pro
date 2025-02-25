@@ -1,0 +1,35 @@
+.input-field {
+  width: 100%;
+  padding: var(--input-padding);
+  box-shadow: var(--input-box-shadow);
+  background-color: #1f1f1f;
+  border-radius: var(--border-radius-btn);
+  border: 1px solid #bedbb040;
+  transition: border 0.1s ease-in-out;
+
+  color: #ffffff;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.28px;
+
+  &::placeholder {
+    color: #ffffff40;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.28px;
+  }
+
+  &:focus {
+    border: 1px solid #bedbb0;
+  }
+}
+
+.error-message {
+  font-size: 12px;
+  color: red;
+  margin-top: 4px;
+}
