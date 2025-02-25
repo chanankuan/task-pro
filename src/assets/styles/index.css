@@ -143,7 +143,7 @@
   --priority-high: #bedbb0;
 
   /* Transitions */
-  --icon-transition: stroke 0.1s ease-in-out, fill 0.1s ease-in-out;
+  --icon-transition: 0.1s ease-in-out, fill 0.1s ease-in-out;
   --bg-transition: background-color 0.1s ease-in-out;
 
   /* Border radius */
