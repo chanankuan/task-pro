@@ -1,33 +1,58 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+
 import s from "./Form.module.scss";
 import EyeIcon from "../Icons/EyeIcon";
 import EyeCrossedIcon from "../Icons/EyeCrossedIcon";
+import { type LoginFormValues, loginSchema } from "../../schemas";
+import { InputField } from "./InputField";
 
 export function LoginForm() {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(loginSchema),
+  });
+  function onSubmit(formData: LoginFormValues) {
+    // TODO: use dispatch
+    console.log(formData);
+
+    // Clear the inputs after submit
+    reset();
+  }
 
   function toggleIsPasswordShown() {
     setIsPasswordShown((prevIsPasswordShown) => !prevIsPasswordShown);
   }
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <ul className={s.list}>
         <li>
-          <input
+          <InputField
             type="email"
-            placeholder="Enter your email"
-            className={s.input}
+            name="email"
+            placeholder="Enter you email"
             autoComplete="email"
+            error={errors.email}
+            register={register}
           />
         </li>
         <li>
           <div className={s["input-wrapper"]}>
-            <input
+            <InputField
               type={isPasswordShown ? "text" : "password"}
+              name="password"
               placeholder="Create a password"
-              className={s.input}
-              autoComplete="current-password"
+              autoComplete="new-password"
+              error={errors.password}
+              register={register}
             />
             <button
               type="button"
