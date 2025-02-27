@@ -20,6 +20,9 @@ export function ShevronIcon({
       fill={fill}
       className={className}
       transform={`rotate(${rotate})`}
+      style={{
+        transition: "transform 0.1s ease-in-out",
+      }}
     >
       <path
         d="M4 6.5L8 10.5L12 6.5"
