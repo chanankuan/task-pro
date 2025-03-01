@@ -1,0 +1,23 @@
+.modal-backdrop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--backdrop-color);
+
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+
+  &.active {
+    display: block;
+    opacity: 1;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .modal-backdrop {
+    display: none;
+  }
+}

@@ -1,0 +1,87 @@
+.board-card {
+  position: relative;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  column-gap: 4px;
+  padding: 20px 18px 20px 14px;
+  transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out,
+    stroke 0.1s ease-in-out;
+  cursor: pointer;
+
+  &.selected,
+  &:hover {
+    background-color: var(--sb-selected-board-bg-color);
+
+    .board-card--title {
+      color: var(--sb-primary-color);
+    }
+
+    svg {
+      stroke: var(--sb-primary-color);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--sb-selected-board-label-color);
+      border-radius: 4px 0px 0px 4px;
+    }
+  }
+
+  span {
+    display: flex;
+  }
+
+  svg {
+    stroke: var(--sb-secondary-color);
+  }
+}
+
+.board-card--title {
+  color: var(--sb-secondary-color);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.board-card--action-buttons {
+  display: none;
+
+  button {
+    display: flex;
+
+    &:hover svg {
+      stroke: var(--sb-primary-color);
+      transition: stroke 0.1s ease-in-out;
+    }
+
+    svg {
+      stroke: var(--sb-secondary-color);
+    }
+  }
+}
+
+.board-card:hover .board-card--action-buttons,
+.board-card.selected .board-card--action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 8px;
+  margin-left: auto;
+}
+
+@media screen and (min-width: 768px) {
+  .board-card {
+    padding: 20px 24px;
+  }
+}
